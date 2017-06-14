@@ -5,7 +5,6 @@ import com.alibaba.druid.support.logging.Log;
 import com.alibaba.druid.support.logging.LogFactory;
 import org.apache.http.HttpHost;
 import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -28,14 +27,13 @@ public class IPUtils {
 
     public static List<IPMessage> IPIsable(List<IPMessage> ipMessages) throws Exception {
 
-        String ip;
-        String port;
+
 
         System.out.println("get共执行" + ipMessages.size() + "个请求");
         ArrayList<String> results = new ArrayList<>();
         PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
-        //设置线程数最大100,如果超过100为请求个数
-        cm.setMaxTotal(ipMessages.size() > 500 ? ipMessages.size() : 500);
+        //设置线程数最大500,如果超过500为请求500个
+        cm.setMaxTotal(ipMessages.size() );
         CloseableHttpClient httpclient = HttpClients.custom()
                 .setConnectionManager(cm)
                 .build();
@@ -46,27 +44,9 @@ public class IPUtils {
 
             for (int j = 0; j < ipMessages.size(); j++) {
 
-                HttpGet get = new HttpGet("https://www.baidu.com");
+              getThreads[j]=  getArrayGetThread(ipMessages, httpclient, getThreads, j);
 
-                ip = ipMessages.get(j).getIPAddress();
-                port = ipMessages.get(j).getIPPort();
-
-                HttpHost proxy = new HttpHost(ip, Integer.parseInt(port));
-                RequestConfig config = RequestConfig.custom().setProxy(proxy).setConnectTimeout(3000).
-                        setSocketTimeout(3000).build();
-                HttpGet httpGet = new HttpGet("https://www.baidu.com");
-                httpGet.setConfig(config);
-
-                httpGet.setHeader("Accept", "text/html,application/xhtml+xml,application/xml;" +
-                        "q=0.9,image/webp,*/*;q=0.8");
-                httpGet.setHeader("Accept-Encoding", "gzip, deflate, sdch");
-                httpGet.setHeader("Accept-Language", "zh-CN,zh;q=0.8");
-                httpGet.setHeader("User-Agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit" +
-                        "/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36");
-
-                getThreads[j] = new GetThread(httpclient, get, j + 1);
             }
-
 
             for (GetThread gt : getThreads) {
                 gt.start();
@@ -75,6 +55,9 @@ public class IPUtils {
             for (GetThread gt : getThreads) {
                 gt.join();
             }
+
+
+
             for (int i = 0; i < ipMessages.size(); i++) {
 
                 try {
@@ -130,5 +113,31 @@ public class IPUtils {
 //        }
 //
         return ipMessages;
+    }
+
+    public static GetThread getArrayGetThread(List<IPMessage> ipMessages, CloseableHttpClient httpclient, GetThread[] getThreads, int j) throws InterruptedException {
+        String ip;
+        String port;HttpGet get = new HttpGet("https://www.baidu.com");
+
+        ip = ipMessages.get(j).getIPAddress();
+        port = ipMessages.get(j).getIPPort();
+
+        HttpHost proxy = new HttpHost(ip, Integer.parseInt(port));
+        RequestConfig config = RequestConfig.custom().setProxy(proxy).setConnectTimeout(3000).
+                setSocketTimeout(3000).build();
+        HttpGet httpGet = new HttpGet("https://www.baidu.com");
+        httpGet.setConfig(config);
+
+        httpGet.setHeader("Accept", "text/html,application/xhtml+xml,application/xml;" +
+                "q=0.9,image/webp,*/*;q=0.8");
+        httpGet.setHeader("Accept-Encoding", "gzip, deflate, sdch");
+        httpGet.setHeader("Accept-Language", "zh-CN,zh;q=0.8");
+        httpGet.setHeader("User-Agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit" +
+                "/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36");
+
+        return new GetThread(httpclient, get, j + 1);
+
+
+
     }
 }

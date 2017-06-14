@@ -83,7 +83,7 @@ public class DataBaseDemo {
             while(resultSet.next()){
                 DatabaseMessage databaseMessage = new DatabaseMessage();
 
-                databaseMessage.setId(resultSet.getString(1));
+                databaseMessage.setId(resultSet.getLong(1));
                 databaseMessage.setIPAddress(resultSet.getString(2));
                 databaseMessage.setIPPort(resultSet.getString(3));
                 databaseMessage.setServerAddress(resultSet.getString(4));

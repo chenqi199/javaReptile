@@ -7,6 +7,8 @@ package threadUtil;
  * @description :
  */
 
+import com.alibaba.druid.support.logging.Log;
+import com.alibaba.druid.support.logging.LogFactory;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -21,6 +23,8 @@ import java.util.concurrent.Callable;
  * A thread that performs a GET.
  */
 public class GetThread extends Thread implements Callable<String> {
+
+    private static Log log = LogFactory.getLog(GetThread.class);
 
     private final CloseableHttpClient httpClient;
     private final HttpContext context;
@@ -41,14 +45,15 @@ public class GetThread extends Thread implements Callable<String> {
     @Override
     public void run() {
         try {
-            System.out.println(id + " - about to get something from " + httpget.getURI());
+//            System.out.println(id + " - about to get something from " + httpget.getURI());
             CloseableHttpResponse response = httpClient.execute(httpget, context);
             try {
-                System.out.println(id + " - get executed");
+//                System.out.println(id + " - get executed");
                 // get the response body as an array of bytes
                 HttpEntity entity = response.getEntity();
                 if (entity != null) {
                     result = EntityUtils.toString(entity);
+                    System.out.println("result============="+result.substring(0,10));
                 }
             } finally {
                 response.close();

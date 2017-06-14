@@ -4,18 +4,18 @@ package IPModel;
  * Created by paranoid on 17-4-21.
  */
 public class DatabaseMessage {
-    private String id;
+    private long id;
     private String IPAddress;
     private String IPPort;
     private String ServerAddress;
     private String IPType;
     private String IPSpeed;
 
-    public String getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(long id) {
         this.id = id;
     }
 

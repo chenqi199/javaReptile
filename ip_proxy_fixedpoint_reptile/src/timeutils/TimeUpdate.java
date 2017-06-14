@@ -29,7 +29,7 @@ public class TimeUpdate {
         JobDetail job = newJob(MyTimeJob.class).withIdentity("job1", "group1").build();
         // 定义一个触发器，job 1将每隔执行一次
         CronTrigger trigger = newTrigger().withIdentity("trigger1", "group1").
-                withSchedule(cronSchedule("02 31 10 * * ?")).build();
+                withSchedule(cronSchedule("59 09 14 * * ?")).build();
 
         //执行任务和触发器
         Date ft = sched.scheduleJob(job, trigger);

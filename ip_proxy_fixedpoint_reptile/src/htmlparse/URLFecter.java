@@ -22,6 +22,8 @@ public class URLFecter {
     public static List<IPMessage> urlParse
             (String url, String ip, String port,
              List<IPMessage> ipMessages) throws ClassNotFoundException, IOException {
+
+
         //调用一个类使其返回html源码
         String html = HttpResponseDemo.getHtml(url, ip, port);
 
