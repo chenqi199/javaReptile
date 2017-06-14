@@ -50,7 +50,7 @@ public class MyTimeJob implements Job {
         }
 
         //构造种子Url
-        for (int i = 1; i <= 5; i++) {
+        for (int i = 1; i <= 2; i++) {
             Urls.add("http://www.xicidaili.com/nn/" + i);
         }
 
@@ -74,9 +74,9 @@ public class MyTimeJob implements Job {
                 }
 
                 //对IP进行轮寻调用
-                if (k >= list.size()) {
-                    k = 0;
-                }
+//                if (k >= list.size()) {
+//                    k = 0;
+//                }
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             } catch (IOException e) {
@@ -95,13 +95,13 @@ public class MyTimeJob implements Job {
             e.printStackTrace();
         }
 
-        for(IPMessage ipMessage : ipMessages){
-//            out.println(ipMessage.getIPAddress());
-//            out.println(ipMessage.getIPPort());
-//            out.println(ipMessage.getServerAddress());
-//            out.println(ipMessage.getIPType());
-//            out.println(ipMessage.getIPSpeed());
-        }
+//        for(IPMessage ipMessage : ipMessages){
+////            out.println(ipMessage.getIPAddress());
+////            out.println(ipMessage.getIPPort());
+////            out.println(ipMessage.getServerAddress());
+////            out.println(ipMessage.getIPType());
+////            out.println(ipMessage.getIPSpeed());
+//        }
 
         //将得到的IP存储在数据库中(每次先清空数据库)
         try {
@@ -122,7 +122,7 @@ public class MyTimeJob implements Job {
             out.println(databaseMessage.getId()+"---------"+databaseMessage.getIPAddress()
                     +"---------"+databaseMessage.getIPPort()+"---------"+databaseMessage.getServerAddress()
                     +"---------"+databaseMessage.getIPType() +"---------"+databaseMessage.getIPSpeed());
-            out.println();
+//            out.println();
         }
     }
 }

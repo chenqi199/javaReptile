@@ -53,7 +53,7 @@ public class GetThread extends Thread implements Callable<String> {
                 HttpEntity entity = response.getEntity();
                 if (entity != null) {
                     result = EntityUtils.toString(entity);
-                    System.out.println("result============="+result.substring(0,10));
+                    System.out.println("result====="+id+"========"+result.substring(0,10));
                 }
             } finally {
                 response.close();

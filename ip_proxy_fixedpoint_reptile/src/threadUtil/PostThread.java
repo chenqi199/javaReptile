@@ -39,7 +39,9 @@ public class PostThread extends Thread implements Callable<String> {
         List<NameValuePair> pairs = null;
         if (params != null && !params.isEmpty()) {
             pairs = new ArrayList<NameValuePair>(params.size());
+            params.put("time",System.currentTimeMillis());
             for (Map.Entry<String, Object> entry : params.entrySet()) {
+
                 Object value = entry.getValue();
                 if (value != null) {
                     pairs.add(new BasicNameValuePair(entry.getKey(), value
@@ -48,7 +50,7 @@ public class PostThread extends Thread implements Callable<String> {
             }
         }
         if (pairs != null && pairs.size() > 0) {
-            encode = encode == null ? "UTF-8" : encode;
+            encode =  "UTF-8" ;
             httppost.setEntity(new UrlEncodedFormEntity(pairs, encode));
         }
         this.httpClient = httpClient;
