@@ -57,8 +57,11 @@ public class VoteMian {
                         "/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36");
                 post.setHeader("Origin", "http://www.ceeexpo.com");
                 post.setHeader("Referer", "http://www.ceeexpo.com/publicvote/");
-                post.setHeader("PHPSESSID", "erqet07598qtp47gg78m56"+i);
-
+//                post.setHeader("PHPSESSID", i+"ibdc8r80pjir1bbd10v31oo6");
+                post.setHeader("Connection", "keep-alive");
+                post.setHeader("X-Forwarded-For", ipmessage.getIPAddress());
+                post.setHeader("Cookie", "PHPSESSID=ibdc8r80pjir1bbd10v31oo672e");
+                System.out.println( post.getConfig());
                 postThreads[i]=new PostThread(httpclient,post, (Map<String, Object>) req.get("params"), (String) req.get("encode"),i+1);
             }
             //执行线程
@@ -98,8 +101,8 @@ public class VoteMian {
         Map<String ,String > params = new HashMap<>();
         requestParams.put("url","http://www.ceeexpo.com/publicvote/ajax.php");
         params.put("nt","12996417340");
-        params.put("user","");
-        params.put("vid","EC4448BQMGCwUGAQIAAgBQBVELAQBUAwsLAwsFBAYDAAQF");
+        params.put("user",null);
+        params.put("vid","703541BwMGCwUGBwcFAgQHUwcABAMKAgQKCgILBwoHCwBW");
         params.put("randcode","9999");
 //        params.put("time","1497426840700");
 
