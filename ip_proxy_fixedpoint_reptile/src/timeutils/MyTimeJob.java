@@ -41,7 +41,13 @@ public class MyTimeJob implements Job {
         }
 
         //对得到的IP进行筛选，选取链接速度前100名的
-        list = IPFilter.Filter(list);
+//        list = IPFilter.Filter(list);
+        try {
+            list = IPUtils.IPIsable(list);
+            System.out.println("第一页的可用ip======================="+list.size()+"个。");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         //构造种子Url
         for (int i = 1; i <= 5; i++) {
@@ -57,7 +63,10 @@ public class MyTimeJob implements Job {
             //每次爬取前的大小
             int preIPMessSize = ipMessages.size();
             try {
-                ipMessages = URLFecter.urlParse(url, IPAddress, IPPort, ipMessages);
+
+//                ipMessages = URLFecter.urlParse(url, IPAddress, IPPort, ipMessages);
+//                继续使用本机爬去ip
+                ipMessages = URLFecter.urlParse(url,ipMessages);
                 //每次爬取后的大小
                 int lastIPMessSize = ipMessages.size();
                 if(preIPMessSize != lastIPMessSize){
@@ -76,17 +85,22 @@ public class MyTimeJob implements Job {
         }
 
         //对得到的IP进行筛选，选取链接速度前100名的
-        ipMessages = IPFilter.Filter(ipMessages);
+//        ipMessages = IPFilter.Filter(ipMessages);
 
         //对ip进行测试，不可用的从数组中删除
-        ipMessages = IPUtils.IPIsable(ipMessages);
+
+        try {
+            ipMessages = IPUtils.IPIsable(ipMessages);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         for(IPMessage ipMessage : ipMessages){
-            out.println(ipMessage.getIPAddress());
-            out.println(ipMessage.getIPPort());
-            out.println(ipMessage.getServerAddress());
-            out.println(ipMessage.getIPType());
-            out.println(ipMessage.getIPSpeed());
+//            out.println(ipMessage.getIPAddress());
+//            out.println(ipMessage.getIPPort());
+//            out.println(ipMessage.getServerAddress());
+//            out.println(ipMessage.getIPType());
+//            out.println(ipMessage.getIPSpeed());
         }
 
         //将得到的IP存储在数据库中(每次先清空数据库)
@@ -105,12 +119,10 @@ public class MyTimeJob implements Job {
         }
 
         for (DatabaseMessage databaseMessage: databaseMessages) {
-            out.println(databaseMessage.getId());
-            out.println(databaseMessage.getIPAddress());
-            out.println(databaseMessage.getIPPort());
-            out.println(databaseMessage.getServerAddress());
-            out.println(databaseMessage.getIPType());
-            out.println(databaseMessage.getIPSpeed());
+            out.println(databaseMessage.getId()+"---------"+databaseMessage.getIPAddress()
+                    +"---------"+databaseMessage.getIPPort()+"---------"+databaseMessage.getServerAddress()
+                    +"---------"+databaseMessage.getIPType() +"---------"+databaseMessage.getIPSpeed());
+            out.println();
         }
     }
 }
