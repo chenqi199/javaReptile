@@ -19,6 +19,8 @@ import org.apache.http.util.EntityUtils;
 
 import java.util.concurrent.Callable;
 
+import static org.apache.http.util.EntityUtils.getContentCharSet;
+
 /**
  * A thread that performs a GET.
  */
@@ -46,14 +48,20 @@ public class GetThread extends Thread implements Callable<String> {
     public void run() {
         try {
 //            System.out.println(id + " - about to get something from " + httpget.getURI());
-            CloseableHttpResponse response = httpClient.execute(httpget, context);
+            CloseableHttpResponse response = httpClient.execute(httpget);
+
             try {
 //                System.out.println(id + " - get executed");
                 // get the response body as an array of bytes
                 HttpEntity entity = response.getEntity();
                 if (entity != null) {
-                    result = EntityUtils.toString(entity);
-                    System.out.println("result====="+id+"========"+result.substring(0,10));
+//                    System.out.println("result====="+id+"========"+entity.getContentEncoding());
+//                    System.out.println("result====="+id+"========"+entity.getContent());
+
+                    // 使用EntityUtils的toString方法，传递编码，默认编码是ISO-8859-1
+                    result = EntityUtils.toString(entity,"utf-8");
+//                    result = new String(result.getBytes("utf-8"),"UTF-8");
+//                    result = EntityUtils.toString(entity,"UTF-8");
                 }
             } finally {
                 response.close();

@@ -29,7 +29,7 @@ public class VoteMian {
         String[] results=new String[listIp.size()];
         PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
         //设置线程数最大100,如果超过100为请求个数
-        cm.setMaxTotal(listIp.size()>500?500:listIp.size());
+        cm.setMaxTotal(listIp.size()>100?listIp.size():100);
         CloseableHttpClient httpclient = HttpClients.custom()
                 .setConnectionManager(cm)
                 .build();
@@ -41,9 +41,8 @@ public class VoteMian {
                 DatabaseMessage ipmessage = listIp.get(i);
 //                配置代理
                 HttpHost proxy = new HttpHost(ipmessage.getIPAddress(), Integer.parseInt(ipmessage.getIPPort()));
-//                System.out.println(ipmessage.getIPAddress()+"---------------------------"+ipmessage.getIPPort());
-                RequestConfig config = RequestConfig.custom().setProxy(proxy).setConnectTimeout(8000).
-                        setSocketTimeout(8000).build();
+                RequestConfig config = RequestConfig.custom().setProxy(proxy).setConnectTimeout(3000).
+                        setSocketTimeout(3000).build();
                 HttpPost post=new HttpPost((String) req.get("url"));
                 post.setConfig(config);
 
@@ -52,15 +51,18 @@ public class VoteMian {
                 post.setHeader("Accept-Encoding", "gzip, deflate, sdch");
                 post.setHeader("Accept-Language", "zh-CN,zh;q=0.8");
                 post.setHeader("X-Requested-With", "XMLHttpRequest");
-                post.setHeader("Host", "www.ceeexpo.com");
+//                post.setHeader("Host", "www.ceeexpo.com");
                 post.setHeader("User-Agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit" +
                         "/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36");
-                post.setHeader("Origin", "http://www.ceeexpo.com");
+//                post.setHeader("Origin", "http://www.ceeexpo.com");
                 post.setHeader("Referer", "http://www.ceeexpo.com/publicvote/");
 //                post.setHeader("PHPSESSID", i+"ibdc8r80pjir1bbd10v31oo6");
                 post.setHeader("Connection", "keep-alive");
-                post.setHeader("X-Forwarded-For", ipmessage.getIPAddress());
-                post.setHeader("Cookie", "PHPSESSID=ibdc8r80pjir1bbd10v31oo672e");
+//                post.setHeader("Content-Length", "104");
+                post.setHeader("ontent-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+//                post.setHeader("Upgrade-Insecure-Requests", "1");
+//                post.setHeader("X-Forwarded-For", ipmessage.getIPAddress());
+                post.setHeader("Cookie", "Hm_lvt_8529e0187e7ea2dcc179b98159952f0d=1497507064; PHPSESSID=ja5ev464o9vj42l362mic4er57");
                 System.out.println( post.getConfig());
                 postThreads[i]=new PostThread(httpclient,post, (Map<String, Object>) req.get("params"), (String) req.get("encode"),i+1);
             }
@@ -99,12 +101,13 @@ public class VoteMian {
         List<Map<String,Object>> reqInfo = new ArrayList<>();
         Map<String,Object> requestParams = new HashMap<>();
         Map<String ,String > params = new HashMap<>();
+        long date = System.currentTimeMillis();
         requestParams.put("url","http://www.ceeexpo.com/publicvote/ajax.php");
         params.put("nt","12996417340");
-        params.put("user",null);
-        params.put("vid","703541BwMGCwUGBwcFAgQHUwcABAMKAgQKCgILBwoHCwBW");
+        params.put("user","");
+        params.put("vid","639E11AAMGCwUHAAMEBQQFAgMLBgEHAAUEBgYGUwZWUwoD");
         params.put("randcode","9999");
-//        params.put("time","1497426840700");
+        params.put("time",String.valueOf(date));
 
         requestParams.put("params",params);
         reqInfo.add(requestParams);

@@ -21,12 +21,12 @@ public class DataBaseDemo {
     public static void add(List<IPMessage> list) throws ClassNotFoundException {
         Class.forName(driver);                         //加载数据库驱动
 
-        try(Connection conn = DriverManager.getConnection(dbURL, user, password);
-            PreparedStatement statement = conn.prepareStatement("INSERT INTO " +
-                    "ProxyPool (IPAddress, IPPort, serverAddress, IPType, IPSpeed)" +
-                    " VALUES (?, ?, ?, ?, ?)")) {
+        try (Connection conn = DriverManager.getConnection(dbURL, user, password);
+             PreparedStatement statement = conn.prepareStatement("INSERT INTO " +
+                     "ProxyPool (IPAddress, IPPort, serverAddress, IPType, IPSpeed)" +
+                     " VALUES (?, ?, ?, ?, ?)")) {
 
-            for(IPMessage ipMessage : list) {
+            for (IPMessage ipMessage : list) {
                 statement.setString(1, ipMessage.getIPAddress());
                 statement.setString(2, ipMessage.getIPPort());
                 statement.setString(3, ipMessage.getServerAddress());
@@ -46,8 +46,8 @@ public class DataBaseDemo {
     //删除数据库指定IP
     public static void deleteIP(int IPid) {
         String sql = "DELETE FROM ProxyPool WHERE id = " + IPid;
-        try(Connection conn = DriverManager.getConnection(dbURL, user, password);
-            Statement statement = conn.createStatement()) {
+        try (Connection conn = DriverManager.getConnection(dbURL, user, password);
+             Statement statement = conn.createStatement()) {
             statement.executeUpdate(sql);
 
             statement.close();
@@ -59,15 +59,14 @@ public class DataBaseDemo {
 
     //数据库表清除功能(id也一并清除)
     public static void delete() {
-        try(Connection conn = DriverManager.getConnection(dbURL, user, password);
-            Statement statement = conn.createStatement()) {
+        try (Connection conn = DriverManager.getConnection(dbURL, user, password);
+             Statement statement = conn.createStatement()) {
             statement.executeUpdate("TRUNCATE TABLE ProxyPool");
 
             statement.close();
             conn.close();
-        }
-        catch(SQLException e){
-                e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
@@ -76,11 +75,11 @@ public class DataBaseDemo {
         Class.forName(driver);                         //加载数据库驱动
         List<DatabaseMessage> list = new ArrayList<>();
 
-        try(Connection conn = DriverManager.getConnection(dbURL, user, password);
-            Statement statement = conn.createStatement()) {
+        try (Connection conn = DriverManager.getConnection(dbURL, user, password);
+             Statement statement = conn.createStatement()) {
             ResultSet resultSet = statement.executeQuery("SELECT * FROM ProxyPool");
 
-            while(resultSet.next()){
+            while (resultSet.next()) {
                 DatabaseMessage databaseMessage = new DatabaseMessage();
 
                 databaseMessage.setId(resultSet.getLong(1));
@@ -101,5 +100,41 @@ public class DataBaseDemo {
         }
 
         return list;
+    }
+    // /数据库查找功能
+    public static DatabaseMessage queryOne(long id) throws ClassNotFoundException {
+        String sql  = "SELECT * FROM ProxyPool WHERE id = "+ id;
+        Class.forName(driver);                         //加载数据库驱动
+//        List<DatabaseMessage> list = new ArrayList<>();
+        DatabaseMessage databaseMessage = new DatabaseMessage();
+        try (Connection conn = DriverManager.getConnection(dbURL, user, password);
+             Statement statement = conn.createStatement()) {
+            ResultSet resultSet = statement.executeQuery(sql);
+
+            while (resultSet.next()) {
+
+
+                databaseMessage.setId(resultSet.getLong(1));
+                databaseMessage.setIPAddress(resultSet.getString(2));
+                databaseMessage.setIPPort(resultSet.getString(3));
+                databaseMessage.setServerAddress(resultSet.getString(4));
+                databaseMessage.setIPType(resultSet.getString(5));
+                databaseMessage.setIPSpeed(resultSet.getString(6));
+
+//                list.add(databaseMessage);
+            }
+
+            resultSet.close();
+            statement.close();
+            conn.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return databaseMessage;
+    }
+
+    public static void main(String[] args) throws ClassNotFoundException {
+        System.out.println(queryOne(23l).toString());
     }
 }
