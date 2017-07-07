@@ -49,7 +49,12 @@ public class IPUtils {
             }
 
             for (GetThread gt : getThreads) {
-                gt.start();
+                try {
+                    gt.start();
+                }catch (Exception e){
+                    ipMessages.remove(ipMessages.get((int)gt.getId()));
+                }
+
             }
             //设置所有线程执行完毕之后再执行后续代码
             for (GetThread gt : getThreads) {
@@ -117,25 +122,26 @@ public class IPUtils {
 
     public static GetThread getArrayGetThread(List<IPMessage> ipMessages, CloseableHttpClient httpclient, GetThread[] getThreads, int j) throws InterruptedException {
         String ip;
-        String port;HttpGet get = new HttpGet("https://www.baidu.com");
+        String port;
 
         ip = ipMessages.get(j).getIPAddress();
         port = ipMessages.get(j).getIPPort();
 
         HttpHost proxy = new HttpHost(ip, Integer.parseInt(port));
-        RequestConfig config = RequestConfig.custom().setProxy(proxy).setConnectTimeout(3000).
-                setSocketTimeout(3000).build();
-        HttpGet httpGet = new HttpGet("https://www.baidu.com");
+        RequestConfig config = RequestConfig.custom().setProxy(proxy).setConnectTimeout(5000).
+                setSocketTimeout(5000).build();
+        HttpGet httpGet = new HttpGet("http://www.ceeexpo.com/publicvote");
         httpGet.setConfig(config);
 
         httpGet.setHeader("Accept", "text/html,application/xhtml+xml,application/xml;" +
                 "q=0.9,image/webp,*/*;q=0.8");
         httpGet.setHeader("Accept-Encoding", "gzip, deflate, sdch");
         httpGet.setHeader("Accept-Language", "zh-CN,zh;q=0.8");
+        httpGet.setHeader("Host", "www.ceeexpo.com");
         httpGet.setHeader("User-Agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit" +
                 "/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36");
 
-        return new GetThread(httpclient, get, j + 1);
+        return new GetThread(httpclient, httpGet, j + 1);
 
 
 

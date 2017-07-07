@@ -62,7 +62,7 @@ public class VoteMian {
                 post.setHeader("ontent-Type", "application/x-www-form-urlencoded; charset=UTF-8");
 //                post.setHeader("Upgrade-Insecure-Requests", "1");
 //                post.setHeader("X-Forwarded-For", ipmessage.getIPAddress());
-                post.setHeader("Cookie", "Hm_lvt_8529e0187e7ea2dcc179b98159952f0d=1497507064; PHPSESSID=ja5ev464o9vj42l362mic4er57");
+                post.setHeader("Cookie", "Hm_lvt_8529e0187e7ea2dcc179b98159952f0d=1497507052; PHPSESSID=ja5ev464o9vj42l362mic4er37");
                 System.out.println( post.getConfig());
                 postThreads[i]=new PostThread(httpclient,post, (Map<String, Object>) req.get("params"), (String) req.get("encode"),i+1);
             }
@@ -104,8 +104,8 @@ public class VoteMian {
         long date = System.currentTimeMillis();
         requestParams.put("url","http://www.ceeexpo.com/publicvote/ajax.php");
         params.put("nt","12996417340");
-        params.put("user","");
-        params.put("vid","639E11AAMGCwUHAAMEBQQFAgMLBgEHAAUEBgYGUwZWUwoD");
+        params.put("user",String.valueOf(Math.random()));
+        params.put("vid","EDE8D7BQMGCwUHBQEKAwcEB1MGAVADAwsBCwAFBQUAA1AF");
         params.put("randcode","9999");
         params.put("time",String.valueOf(date));
 

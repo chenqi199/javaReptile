@@ -8,12 +8,21 @@ import org.apache.http.HttpHost;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 import threadUtil.GetThread;
+import threadUtil.PostThread;
 
+import java.io.UnsupportedEncodingException;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by chenqi on 2017/6/15 0015 : 上午 11:07.
@@ -25,17 +34,32 @@ public class OnlyOneLineGetReptllie {
 
     public static void main(String[] args) throws Exception {
         CloseableHttpClient httpCient = HttpClients.createDefault();
-        DatabaseMessage databaseMessage = DataBaseDemo.queryOne(33l);
+        DatabaseMessage databaseMessage = DataBaseDemo.queryOne(18);
 
         GetThread getThread = getGetThread(databaseMessage, httpCient, 1);
         getThread.start();
-        getThread.join();
+        getThread.join(10000);
         String result = getThread.call();
-//        String result = HttpResponseDemo.getHtml("https://www.baidu.com");
+        System.out.println(result.substring(0,300));
+//将html解析成DOM结构
+        Document document = Jsoup.parse(result);
+        //提取所需要的数据
+        Elements trs = document.select("button[class = runCode btn_tp]");
+        String value = trs.get(1).attr("val");
+        System.out.println(value);
 
-        System.out.println(result);
 
-
+        Map<String, Object> params = new HashMap<>();
+        params.put("nt", "12996417340");
+        params.put("user", String.valueOf(Math.random()));
+        params.put("vid", value);
+        params.put("randcode", "9999");
+        params.put("time", String.valueOf(System.currentTimeMillis()));
+        PostThread postThread = postThread(databaseMessage, httpCient, 1, params);
+        postThread.start();
+        postThread.join();
+        String black = postThread.call();
+        System.out.println(black);
     }
     public static GetThread getGetThread(DatabaseMessage ipMessages, CloseableHttpClient httpclient, int j) throws InterruptedException {
         String ip;
@@ -70,6 +94,40 @@ public class OnlyOneLineGetReptllie {
 
 
         return new GetThread(httpclient, httpGet, j + 1);
+
+
+
+    }
+
+public static PostThread postThread(DatabaseMessage ipMessages, CloseableHttpClient httpclient, int j, Map<String,Object> params) throws InterruptedException, UnsupportedEncodingException {
+        String ip;
+        String port;
+        ip = ipMessages.getIPAddress();
+        port = ipMessages.getIPPort();
+        HttpHost proxy = new HttpHost(ip, Integer.parseInt(port));
+         RequestConfig config = RequestConfig.custom().setProxy(proxy).setConnectTimeout(80000).
+        setSocketTimeout(80000).build();
+    HttpPost post=new HttpPost("http://www.ceeexpo.com/publicvote/ajax.php");
+    post.setConfig(config);
+
+//        httpGet.setConfig(config);
+        post.setHeader("Accept", "text/html,application/xhtml+xml,application/xml;" +
+                "q=0.9,image/webp,*/*;q=0.8");
+        post.setHeader("Accept-Encoding", "gzip, deflate, sdch");
+        post.setHeader("Accept-Language", "zh-CN,zh;q=0.8");
+        post.setHeader("Cache-Control", "no-cache");
+        post.setHeader("Connection", "keep-alive");
+        post.setHeader("Cookie", "Hm_lvt_8529e0187e7ea2dcc179b78159952f0d=1497507054; PHPSESSID=u1npgna3d94d5f1unbdb22e7q1");
+        post.setHeader("Host", "www.ceeexpo.com");
+    post.setHeader("Referer", "http://www.ceeexpo.com/publicvote/");
+
+    post.setHeader("Pragma", "no-cache");
+        post.setHeader("Upgrade-Insecure-Requests", "1");
+        post.setHeader("User-Agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 " +
+                "(KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36");
+
+
+        return new PostThread(httpclient, post,params,"urf-8", j + 1);
 
 
 
