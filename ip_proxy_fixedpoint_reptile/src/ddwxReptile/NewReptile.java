@@ -109,7 +109,13 @@ public class NewReptile {
         }
         return baseUrls;
     }
-
+    /**
+     * @Description : 递归抓取页面内容，没有上一张的链接就返回
+     * @param beans 容器
+     * @param url 目标url
+     * @return java.util.List<ddwxReptile.DdwxHtmlBean>
+     * @throws
+     */
     public  static List<DdwxHtmlBean> getDoc(List<DdwxHtmlBean> beans, String url) {
         Document doc = null;
         String tittle = "", textBody = "", beforeA = "";
@@ -125,7 +131,7 @@ public class NewReptile {
                 beforeA="";
             DdwxHtmlBean ddwxHtml = new DdwxHtmlBean(tittle, textBody, beforeA);
             beans.add(ddwxHtml);
-            if (aTarget.size()>0) {
+            if (aTarget.size()>0) { //上一章的链接为空时结束递归
                 getDoc(beans,  beforeA);
             }
         } catch (IOException e) {
