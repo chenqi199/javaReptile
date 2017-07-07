@@ -33,10 +33,10 @@ public class NewReptile {
             System.out.println(firstUrlsOnTarget);
 //递归遍历所有的首节点，取出内容
             List<DdwxHtmlBean> ddwxHtmlBeans = new ArrayList<>(200);
-            DdwxHtml ddwxHtml = new DdwxHtml();
+//            DdwxHtml ddwxHtml = new DdwxHtml();
             for (String firstUrl :
                     firstUrlsOnTarget) {
-                ddwxHtml.getDoc(ddwxHtmlBeans, "http://www.ddweixiao.com", firstUrl);
+                getDoc(ddwxHtmlBeans, firstUrl);
             }
             System.out.println(ddwxHtmlBeans.size());
             System.out.println("__________________________________________________________________");
@@ -110,5 +110,28 @@ public class NewReptile {
         return baseUrls;
     }
 
+    public  static List<DdwxHtmlBean> getDoc(List<DdwxHtmlBean> beans, String url) {
+        Document doc = null;
+        String tittle = "", textBody = "", beforeA = "";
+        try {
+            doc = Jsoup.connect(ROOTURL + url).userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36").timeout(30000).get();
+            tittle = doc.select("h3[class=biaoti]").get(0).text();
+            textBody = doc.select("[class=wzzw]").get(2).html();
+            Element span = doc.select("[class= fenye1]").select("span").get(0);
+            Elements aTarget = span.select("a");
+            if (aTarget.size()>0)
+                beforeA = aTarget.get(0).attr("href");
+            else
+                beforeA="";
+            DdwxHtmlBean ddwxHtml = new DdwxHtmlBean(tittle, textBody, beforeA);
+            beans.add(ddwxHtml);
+            if (aTarget.size()>0) {
+                getDoc(beans,  beforeA);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return beans;
+    }
 
 }
