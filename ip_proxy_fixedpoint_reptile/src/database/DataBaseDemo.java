@@ -27,7 +27,7 @@ public class DataBaseDemo {
                      " VALUES (?, ?, ?, ?, ?)")) {
 
             for (IPMessage ipMessage : list) {
-                statement.setString(1, ipMessage.getIPAddress());
+                statement.setString(1,   ipMessage.getIPAddress());
                 statement.setString(2, ipMessage.getIPPort());
                 statement.setString(3, ipMessage.getServerAddress());
                 statement.setString(4, ipMessage.getIPType());
