@@ -4,11 +4,7 @@ import IPModel.DatabaseMessage;
 import IPModel.IPMessage;
 import database.DataBaseDemo;
 import htmlparse.URLFecter;
-import ipfilter.IPFilter;
 import ipfilter.IPUtils;
-import org.quartz.Job;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -17,12 +13,15 @@ import java.util.List;
 import static java.lang.System.out;
 
 /**
- * Created by paranoid on 17-4-13.
+ * 描述：
+ * Created by  chen_q_i@163.com on 2017/9/26 : 10:59.
+ *
+ * @version : 1.0
  */
+public class GetIpMain {
+    public static void main(String[] args) throws ClassNotFoundException {
 
-public class MyTimeJob implements Job {
-//    public void execute(JobExecutionContext argv) throws JobExecutionException {
-    public static void main(){
+
         List<String> Urls = new ArrayList<>();
         List<DatabaseMessage> databaseMessages = new ArrayList<>();
         List<IPMessage> list = new ArrayList<>();
@@ -32,47 +31,51 @@ public class MyTimeJob implements Job {
         String IPPort;
         int k, j;
 
-        //首先使用本机ip进行爬取
-        try {
-            list = URLFecter.urlParse(url, list);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
+//        //首先使用本机ip进行爬取
+//        try {
+//            list = URLFecter.urlParse(url, list);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        } catch (ClassNotFoundException e) {
+//            e.printStackTrace();
+//        }
+//
+//        //对得到的IP进行筛选，选取链接速度前100名的
+////        list = IPFilter.Filter(list);
+//        try {
+//            list = IPUtils.IPIsable(list);
+//            System.out.println("第一页的可用ip======================="+list.size()+"个。");
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
 
-        //对得到的IP进行筛选，选取链接速度前100名的
-//        list = IPFilter.Filter(list);
-        try {
-            list = IPUtils.IPIsable(list);
-            System.out.println("第一页的可用ip======================="+list.size()+"个。");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        databaseMessages = DataBaseDemo.query();
 
         //构造种子Url
-        for (int i = 1; i <= 5; i++) {
+        for (int i = 1; i <= 27; i++) {
             Urls.add("http://www.xicidaili.com/nn/" + i);
         }
 
         //得到所需要的数据
-        for (k = 0, j = 0; j < Urls.size(); k++) {
+//        for (k = 0, j = 0; j < Urls.size() && k<list.size(); k++) {
+        for ( j = 1; j < Urls.size() ;j++) {
             url = Urls.get(j);
 
-            IPAddress = list.get(k).getIPAddress();
-            IPPort = list.get(k).getIPPort();
+//            IPAddress = list.get(k).getIPAddress();
+//            IPPort = list.get(k).getIPPort();
             //每次爬取前的大小
             int preIPMessSize = ipMessages.size();
             try {
 
-//                ipMessages = URLFecter.urlParse(url, IPAddress, IPPort, ipMessages);
+                ipMessages = URLFecter.urlParse(url, databaseMessages.get(j).getIPAddress(),
+                        databaseMessages.get(j).getIPPort(), ipMessages);
 //                继续使用本机爬去ip
-                ipMessages = URLFecter.urlParse(url,ipMessages);
+//                URLFecter.urlParse(url,ipMessages);
                 //每次爬取后的大小
                 int lastIPMessSize = ipMessages.size();
-                if(preIPMessSize != lastIPMessSize){
-                    j++;
-                }
+//                if(preIPMessSize != lastIPMessSize){
+//                    j++;
+//                }
 
                 //对IP进行轮寻调用
 //                if (k >= list.size()) {
@@ -90,6 +93,7 @@ public class MyTimeJob implements Job {
 
         //对ip进行测试，不可用的从数组中删除
 
+        System.out.println("size===="+ipMessages.size());
         try {
             ipMessages = IPUtils.IPIsable(ipMessages);
         } catch (Exception e) {
@@ -106,7 +110,7 @@ public class MyTimeJob implements Job {
 
         //将得到的IP存储在数据库中(每次先清空数据库)
         try {
-            DataBaseDemo.delete();
+//            DataBaseDemo.delete();
             DataBaseDemo.add(ipMessages);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
@@ -127,8 +131,4 @@ public class MyTimeJob implements Job {
         }
     }
 
-    @Override
-    public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
-
-    }
 }

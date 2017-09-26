@@ -41,14 +41,24 @@ public class GetArticle {
             article.setContent(getContentByUrl(NewReptile.ROOTURL+article.getContent()));
         }
 
-        System.out.println(articles.get(3));
+//        System.out.println(articles.get(3));
 
     }
 
     public static String getContentByUrl(String url) throws IOException {
         Document doc;
         doc = Jsoup.connect(url).userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36").timeout(30000).get();
-        return doc.select("[class=wzzw]").get(2).html();
+       Element content= doc.select("[class=wzzw]").get(2);
+       Elements imgs = content.select("img[src]");
+       if (!imgs.isEmpty()){
+//           System.out.println(imgs);
+           for (Element e :
+                   imgs) {
+                e.attr("style","width:100%;");
+           }
+//           System.out.println(content.html());
+       }
+       return content.html();
     }
 
     public static List<Article> getLiForArticle(SimpleDateFormat format ,String url) throws IOException, ParseException {
@@ -56,6 +66,7 @@ public class GetArticle {
         Document doc;
         doc = Jsoup.connect(url).userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36").timeout(30000).get();
         Elements elements = doc.select("[class=wzli]").get(0).select("li");
+        System.out.print(elements.size()+" , ");
         for (Element e :
                 elements) {
             String conetent = e.select("a").get(0).attr("href");
@@ -65,7 +76,7 @@ public class GetArticle {
             String ctime = e.select("b").get(1).text();
           long cTime=  format.parse(ctime).getTime();
             Article article = new Article(tittle,cTime,author,imageUrl,conetent);
-            System.out.println(article);
+//            System.out.println(article);
             articles.add(article);
         }
         return articles;
@@ -81,7 +92,7 @@ public class GetArticle {
         for (int i= 2;i<elements.size()-2;i++){
             Urls.add(url+elements.get(i).select("a").attr("href"));
         }
-
+        System.out.println(Urls.size());
         return Urls;
     }
 

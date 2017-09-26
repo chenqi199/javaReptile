@@ -102,10 +102,10 @@ public class DataBaseDemo {
         return list;
     }
     // /数据库查找功能
-    public static DatabaseMessage queryOne(long id) throws ClassNotFoundException {
-        String sql  = "SELECT * FROM ProxyPool WHERE id = "+ id;
+    public static List<DatabaseMessage> queryOne(long id) throws ClassNotFoundException {
+        String sql  = "SELECT * FROM ProxyPool WHERE id > "+ id;
         Class.forName(driver);                         //加载数据库驱动
-//        List<DatabaseMessage> list = new ArrayList<>();
+        List<DatabaseMessage> list = new ArrayList<>();
         DatabaseMessage databaseMessage = new DatabaseMessage();
         try (Connection conn = DriverManager.getConnection(dbURL, user, password);
              Statement statement = conn.createStatement()) {
@@ -121,7 +121,7 @@ public class DataBaseDemo {
                 databaseMessage.setIPType(resultSet.getString(5));
                 databaseMessage.setIPSpeed(resultSet.getString(6));
 
-//                list.add(databaseMessage);
+                list.add(databaseMessage);
             }
 
             resultSet.close();
@@ -131,7 +131,7 @@ public class DataBaseDemo {
             e.printStackTrace();
         }
 
-        return databaseMessage;
+        return list;
     }
 
     public static void main(String[] args) throws ClassNotFoundException {

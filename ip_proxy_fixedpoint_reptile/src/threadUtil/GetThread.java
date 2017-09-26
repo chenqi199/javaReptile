@@ -24,7 +24,7 @@ import static org.apache.http.util.EntityUtils.getContentCharSet;
 /**
  * A thread that performs a GET.
  */
-public class GetThread extends Thread implements Callable<String> {
+public class GetThread  implements Callable<String> {
 
     private static Log log = LogFactory.getLog(GetThread.class);
 
@@ -32,7 +32,7 @@ public class GetThread extends Thread implements Callable<String> {
     private final HttpContext context;
     private final HttpGet httpget;
     private final int id;
-    private String result = null;
+    private String result = "";
 
     public GetThread(CloseableHttpClient httpClient, HttpGet httpget, int id) {
         this.httpClient = httpClient;
@@ -44,8 +44,35 @@ public class GetThread extends Thread implements Callable<String> {
     /**
      * Executes the GetMethod and prints some status information.
      */
+//    @Override
+//    public void run() {
+//        try {
+////            System.out.println(id + " - about to get something from " + httpget.getURI());
+//            CloseableHttpResponse response = httpClient.execute(httpget);
+//
+//            try {
+////                System.out.println(id + " - get executed");
+//                // get the response body as an array of bytes
+//                HttpEntity entity = response.getEntity();
+//                if (entity != null) {
+////                    System.out.println("result====="+id+"========"+entity.getContentEncoding());
+////                    System.out.println("result====="+id+"========"+entity.getContent());
+//
+//                    // 使用EntityUtils的toString方法，传递编码，默认编码是ISO-8859-1
+//                    result = EntityUtils.toString(entity,"utf-8");
+////                    result = new String(result.getBytes("utf-8"),"UTF-8");
+////                    result = EntityUtils.toString(entity,"UTF-8");
+//                }
+//            } finally {
+//                response.close();
+//            }
+//        } catch (Exception e) {
+//            System.out.println(id + " - error: " + e);
+//        }
+//    }
+
     @Override
-    public void run() {
+    public String call() throws Exception {
         try {
 //            System.out.println(id + " - about to get something from " + httpget.getURI());
             CloseableHttpResponse response = httpClient.execute(httpget);
@@ -69,10 +96,6 @@ public class GetThread extends Thread implements Callable<String> {
         } catch (Exception e) {
             System.out.println(id + " - error: " + e);
         }
-    }
-
-    @Override
-    public String call() throws Exception {
         return result;
     }
 }

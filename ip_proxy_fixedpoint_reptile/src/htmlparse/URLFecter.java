@@ -62,6 +62,7 @@ public class URLFecter {
     public static List<IPMessage> urlParse(String url, List<IPMessage> list)
             throws IOException, ClassNotFoundException {
         String html = HttpResponseDemo.getHtml(url);
+        System.out.println("html====>"+html);
 
         //将html解析成DOM结构
         Document document = Jsoup.parse(html);

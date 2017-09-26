@@ -20,16 +20,16 @@ public class IPFilter {
     public static List<IPMessage> Filter(List<IPMessage> list) {
         List<IPMessage> newlist = new ArrayList<>();
 
-        Collections.sort(list, new Comparator<IPMessage>() {
-            @Override
-            public int compare(IPMessage o1, IPMessage o2) {
+                Collections.sort(list, new Comparator<IPMessage>() {
+                    @Override
+                    public int compare(IPMessage o1, IPMessage o2) {
                 return o1.getIPSpeed().compareTo(o2.getIPSpeed());
             }
         });
 
         //只返回容器中前100的对象
         for(int i = 0; i < list.size(); i++) {
-            if(i < 100) {
+            if(i < 50) {
                 newlist.add(list.get(i));
             }else {
                 break;

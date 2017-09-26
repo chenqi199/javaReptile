@@ -28,8 +28,8 @@ public class HttpResponseDemo {
 
         //设置代理访问和超时处理
         HttpHost proxy = new HttpHost(ip, Integer.parseInt(port));
-        RequestConfig config = RequestConfig.custom().setProxy(proxy).setConnectTimeout(10000).
-                setSocketTimeout(10000).build();
+        RequestConfig config = RequestConfig.custom().setProxy(proxy).setConnectTimeout(5000).
+                setSocketTimeout(5000).build();
         HttpGet httpGet = new HttpGet(url);
         httpGet.setConfig(config);
 
@@ -44,7 +44,7 @@ public class HttpResponseDemo {
                 "bm9CZEllSXNTYkNZZWk2Nnp3NGNDcFFSQVFodzk1dmpLZWM9BjsARg%3D%3D--09d8736fbfb9a8544" +
                 "b46eef48bb320c2b40ee721; Hm_lvt_0cf76c77469e965d2957f0553e6ecf59=1492128157,149" +
                 "2160558,1492347839,1492764281; Hm_lpvt_0cf76c77469e965d2957f0553e6ecf59=1492764295");
-        httpGet.setHeader("Host", "www.baidu.com");
+//        httpGet.setHeader("Host", "www.baidu.com");
         httpGet.setHeader("Pragma", "no-cache");
         httpGet.setHeader("Upgrade-Insecure-Requests", "1");
         httpGet.setHeader("User-Agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 " +

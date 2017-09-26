@@ -34,32 +34,32 @@ public class OnlyOneLineGetReptllie {
 
     public static void main(String[] args) throws Exception {
         CloseableHttpClient httpCient = HttpClients.createDefault();
-        DatabaseMessage databaseMessage = DataBaseDemo.queryOne(18);
+//        DatabaseMessage databaseMessage = DataBaseDemo.queryOne(1);
 
-        GetThread getThread = getGetThread(databaseMessage, httpCient, 1);
-        getThread.start();
-        getThread.join(10000);
-        String result = getThread.call();
-        System.out.println(result.substring(0,300));
-//将html解析成DOM结构
-        Document document = Jsoup.parse(result);
-        //提取所需要的数据
-        Elements trs = document.select("button[class = runCode btn_tp]");
-        String value = trs.get(1).attr("val");
-        System.out.println(value);
-
-
-        Map<String, Object> params = new HashMap<>();
-        params.put("nt", "12996417340");
-        params.put("user", String.valueOf(Math.random()));
-        params.put("vid", value);
-        params.put("randcode", "9999");
-        params.put("time", String.valueOf(System.currentTimeMillis()));
-        PostThread postThread = postThread(databaseMessage, httpCient, 1, params);
-        postThread.start();
-        postThread.join();
-        String black = postThread.call();
-        System.out.println(black);
+//        GetThread getThread = getGetThread(databaseMessage, httpCient, 1);
+//        getThread.start();
+//        getThread.join(10000);
+//        String result = getThread.call();
+//        System.out.println(result.substring(0,300));
+////将html解析成DOM结构
+//        Document document = Jsoup.parse(result);
+//        //提取所需要的数据
+//        Elements trs = document.select("button[class = runCode btn_tp]");
+//        String value = trs.get(1).attr("val");
+//        System.out.println(value);
+//
+//
+//        Map<String, Object> params = new HashMap<>();
+//        params.put("nt", true);
+//        params.put("user", String.valueOf(Math.random()));
+//        params.put("vid", value);
+//        params.put("randcode", "9999");
+//        params.put("time", String.valueOf(System.currentTimeMillis()));
+//        PostThread postThread = postThread(databaseMessage, httpCient, 1, params);
+//        postThread.start();
+//        postThread.join();
+//        String black = postThread.call();
+//        System.out.println(black);
     }
     public static GetThread getGetThread(DatabaseMessage ipMessages, CloseableHttpClient httpclient, int j) throws InterruptedException {
         String ip;
@@ -69,9 +69,10 @@ public class OnlyOneLineGetReptllie {
         ip = ipMessages.getIPAddress();
         port = ipMessages.getIPPort();
         HttpHost proxy = new HttpHost(ip, Integer.parseInt(port));
-         RequestConfig config = RequestConfig.custom().setProxy(proxy).setConnectTimeout(80000).
-        setSocketTimeout(80000).build();
-        HttpGet httpGet = new HttpGet("http://www.ceeexpo.com/publicvote" );
+         RequestConfig config = RequestConfig.custom().setProxy(proxy).setConnectTimeout(8000).
+        setSocketTimeout(1000).build();
+//        HttpGet httpGet = new HttpGet("http://www.xicidaili.com/nn/1" );
+        HttpGet httpGet = new HttpGet("http://www.ceeexpo.com/publicvote/" );
         httpGet.setConfig(config);
 
 //        httpGet.setConfig(config);
@@ -93,7 +94,7 @@ public class OnlyOneLineGetReptllie {
                 "(KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36");
 
 
-        return new GetThread(httpclient, httpGet, j + 1);
+        return new GetThread(httpclient, httpGet, j );
 
 
 

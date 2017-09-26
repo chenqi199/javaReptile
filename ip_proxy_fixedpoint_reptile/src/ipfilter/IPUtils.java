@@ -1,8 +1,10 @@
 package ipfilter;
 
+import IPModel.DatabaseMessage;
 import IPModel.IPMessage;
 import com.alibaba.druid.support.logging.Log;
 import com.alibaba.druid.support.logging.LogFactory;
+import mainwork.OnlyOneLineGetReptllie;
 import org.apache.http.HttpHost;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
@@ -14,6 +16,9 @@ import threadUtil.GetThread;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import static java.lang.System.out;
 
@@ -38,47 +43,72 @@ public class IPUtils {
                 .setConnectionManager(cm)
                 .build();
 
-        GetThread[] getThreads = new GetThread[ipMessages.size()];
-        try {
-
-
-            for (int j = 0; j < ipMessages.size(); j++) {
-
-              getThreads[j]=  getArrayGetThread(ipMessages, httpclient, getThreads, j);
-
-            }
-
-            for (GetThread gt : getThreads) {
-                try {
-                    gt.start();
-                }catch (Exception e){
-                    ipMessages.remove(ipMessages.get((int)gt.getId()));
-                }
-
-            }
-            //设置所有线程执行完毕之后再执行后续代码
-            for (GetThread gt : getThreads) {
-                gt.join();
-            }
-
-
-
-            for (int i = 0; i < ipMessages.size(); i++) {
-
-                try {
-                    results.add(getThreads[i].call());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    out.println("不可用代理已删除" + ipMessages.get(i).getIPAddress() + ": " + ipMessages.get(i).getIPPort());
-                    ipMessages.remove(ipMessages.get(i));
-                    i--;
-                }
-
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-
+//        GetThread[] getThreads = new GetThread[ipMessages.size()];
+        ExecutorService executorService = Executors.newCachedThreadPool();
+        List<Future<String>> pages = new ArrayList<>();
+        for ( int i = 0 ;i<ipMessages.size();i++       ) {
+            DatabaseMessage da = new DatabaseMessage();
+            da.setIPAddress(ipMessages.get(i).getIPAddress());
+            da.setIPPort(ipMessages.get(i).getIPPort());
+            pages.add(i, executorService.submit(OnlyOneLineGetReptllie. getGetThread(da, httpclient, i)));
         }
+        List<IPMessage> ipMessages1 = new ArrayList<>(ipMessages);
+        for (int j = 0; j < pages.size(); j++) {
+            try {
+               String s =  pages.get(j).get();
+               if (s.length()==0){
+                   out.println("不可用代理已删除" + ipMessages1.get(j).getIPAddress() + ": " + ipMessages1.get(j).getIPPort());
+                   ipMessages.remove(ipMessages1.get(j));
+               }else {
+                   System.out.println(s.substring(0,s.length()>25?25:s.length()));
+               }
+            }catch (Exception e){
+//                out.println("不可用代理已删除" + ipMessages.get(j).getIPAddress() + ": " + ipMessages.get(j).getIPPort());
+//                ipMessages.remove(ipMessages.get(j));
+                e.printStackTrace();
+            }
+        }
+
+//        try {
+//
+//
+//            for (int j = 0; j < ipMessages.size(); j++) {
+//
+//              getThreads[j]=  getArrayGetThread(ipMessages, httpclient, getThreads, j);
+//
+//            }
+//
+//            for (GetThread gt : getThreads) {
+//                try {
+//                    gt.start();
+//                }catch (Exception e){
+//                    ipMessages.remove(ipMessages.get((int)gt.getId()));
+//                }
+//
+//            }
+//            //设置所有线程执行完毕之后再执行后续代码
+//            for (GetThread gt : getThreads) {
+//                gt.join();
+//            }
+//
+//
+//
+//            for (int i = 0; i < ipMessages.size(); i++) {
+//
+//                try {
+//                    results.add(getThreads[i].call());
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                    out.println("不可用代理已删除" + ipMessages.get(i).getIPAddress() + ": " + ipMessages.get(i).getIPPort());
+//                    ipMessages.remove(ipMessages.get(i));
+//                    i--;
+//                }
+//
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//
+//        }
 
 
 //        CloseableHttpClient httpClient = HttpClients.createDefault();
